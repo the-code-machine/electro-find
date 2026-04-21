@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link2, ExternalLink, Cpu, Database, Code2 } from "lucide-react";
 
@@ -17,9 +18,12 @@ const TEAM = [
     icon: Code2,
     color: "#F97316",
     gradient: "from-orange-500 to-amber-400",
-    linkedin: "https://linkedin.com",
-    github: "https://github.com",
+    linkedin: "https://www.linkedin.com/in/leena-lokhande-6a126625b/",
+    github: "https://github.com/leenalokhande",
     initials: "LL",
+    // unavatar.io proxies LinkedIn profile photos reliably
+    avatar:
+      "https://media.licdn.com/dms/image/v2/D4D35AQGhiHMYosZ5Sw/profile-framedphoto-shrink_800_800/B4DZeIAf5kGgAk-/0/1750333522041?e=1777359600&v=beta&t=mQMvTpC-gKjw-NKl47HtmrzuJOBA1RKXmCL7PN_TWzU",
   },
   {
     name: "Prachi Dwivedi",
@@ -34,9 +38,11 @@ const TEAM = [
     icon: Cpu,
     color: "#6366F1",
     gradient: "from-indigo-500 to-violet-500",
-    linkedin: "https://linkedin.com",
+    linkedin: "https://www.linkedin.com/in/prachi-dwivedi-2bb814221/",
     github: "https://github.com",
     initials: "PD",
+    avatar:
+      "https://media.licdn.com/dms/image/v2/D4D35AQHTw6q2FGem0Q/profile-framedphoto-shrink_800_800/B4DZmt.sFvIcAg-/0/1759560516315?e=1777359600&v=beta&t=xvR0LNg5tVwJ5Q0KccKR_HqMyHU3_80kzSvE54QeL4Q",
   },
   {
     name: "Anu Choudhary",
@@ -51,9 +57,11 @@ const TEAM = [
     icon: Database,
     color: "#0EA5E9",
     gradient: "from-sky-500 to-cyan-400",
-    linkedin: "https://linkedin.com",
+    linkedin: "https://www.linkedin.com/in/anu-choudhary-34a0b5256/",
     github: "https://github.com",
     initials: "AC",
+    avatar:
+      "https://media.licdn.com/dms/image/v2/D4E35AQEo0J6fl-uUDw/profile-framedphoto-shrink_800_800/B4EZu8XP9AH8Ag-/0/1768391770331?e=1777359600&v=beta&t=OP7TdLxvddTNLqtSMpHF3NWDzDqGjnIakUsTkwrDS1I",
   },
 ];
 
@@ -64,6 +72,41 @@ function fadeUp(delay = 0) {
     viewport: { once: true },
     transition: { duration: 0.45, delay },
   };
+}
+
+// Avatar with fallback to gradient initials
+function Avatar({
+  src,
+  initials,
+  gradient,
+  name,
+}: {
+  src: string;
+  initials: string;
+  gradient: string;
+  name: string;
+}) {
+  const [failed, setFailed] = useState(false);
+
+  if (!failed) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={src}
+        alt={name}
+        className="h-full w-full rounded-2xl object-cover"
+        onError={() => setFailed(true)}
+      />
+    );
+  }
+
+  return (
+    <div
+      className={`flex h-full w-full items-center justify-center rounded-2xl bg-gradient-to-br ${gradient} text-xl font-extrabold text-white`}
+    >
+      {initials}
+    </div>
+  );
 }
 
 export function TeamSection() {
@@ -99,6 +142,7 @@ export function TeamSection() {
                 linkedin,
                 github,
                 initials,
+                avatar,
               },
               i,
             ) => (
@@ -111,22 +155,28 @@ export function TeamSection() {
                 <div className={`h-1.5 w-full bg-gradient-to-r ${gradient}`} />
 
                 <div className="p-6">
-                  {/* Avatar */}
+                  {/* Avatar row */}
                   <div className="mb-4 flex items-start justify-between">
-                    <div
-                      className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${gradient} text-xl font-extrabold text-white shadow-lg`}
-                    >
-                      {initials}
+                    {/* Profile photo — 56×56, falls back to initials */}
+                    <div className="relative h-14 w-14 flex-shrink-0 overflow-hidden rounded-2xl shadow-md ring-2 ring-white">
+                      <Avatar
+                        src={avatar}
+                        initials={initials}
+                        gradient={gradient}
+                        name={name}
+                      />
                     </div>
+
+                    {/* Role icon */}
                     <div
                       className="flex h-9 w-9 items-center justify-center rounded-xl"
-                      style={{ background: `${color}15` }}
+                      style={{ background: `${color}18` }}
                     >
-                      <Icon className="h-4.5 w-4.5" style={{ color }} />
+                      <Icon className="h-[18px] w-[18px]" style={{ color }} />
                     </div>
                   </div>
 
-                  {/* Info */}
+                  {/* Name / role / branch */}
                   <h3 className="text-lg font-extrabold text-zinc-950">
                     {name}
                   </h3>
@@ -150,13 +200,13 @@ export function TeamSection() {
                     ))}
                   </ul>
 
-                  {/* Social */}
+                  {/* Social links */}
                   <div className="mt-5 flex items-center gap-2 border-t border-zinc-100 pt-4">
                     <a
                       href={linkedin}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 rounded-lg border border-zinc-200 px-3 py-1.5 text-xs font-semibold text-zinc-600 transition-all hover:border-zinc-300 hover:text-zinc-900"
+                      className="flex items-center gap-1.5 rounded-lg border border-zinc-200 px-3 py-1.5 text-xs font-semibold text-zinc-600 transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
                     >
                       <Link2 className="h-3.5 w-3.5" />
                       LinkedIn
@@ -165,7 +215,7 @@ export function TeamSection() {
                       href={github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 rounded-lg border border-zinc-200 px-3 py-1.5 text-xs font-semibold text-zinc-600 transition-all hover:border-zinc-300 hover:text-zinc-900"
+                      className="flex items-center gap-1.5 rounded-lg border border-zinc-200 px-3 py-1.5 text-xs font-semibold text-zinc-600 transition-all hover:border-zinc-400 hover:text-zinc-900"
                     >
                       <ExternalLink className="h-3.5 w-3.5" />
                       GitHub
@@ -177,7 +227,7 @@ export function TeamSection() {
           )}
         </div>
 
-        {/* Branch note */}
+        {/* Footer note */}
         <motion.p
           {...fadeUp(0.35)}
           className="mt-10 text-center text-sm text-zinc-400"
